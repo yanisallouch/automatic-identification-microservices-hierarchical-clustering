@@ -1,0 +1,19 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>yanisallouch</groupId>
+	<artifactId>automatic-identification</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Automatic-Identification-Microservices</name>
+	<description>Automatic Identiﬁcation of Microservices Using a Hierarchical Clustering Algorithm</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>fr.inria.gforge.spoon</groupId>
+			<artifactId>spoon-core</artifactId>
+			<!-- See rendered release value at http://spoon.gforge.inria.fr/ -->
+			<version>10.4.2</version>
+		</dependency>
+	</dependencies>
+</project>
