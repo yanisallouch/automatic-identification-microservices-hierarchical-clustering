@@ -1,6 +1,7 @@
 # automatic-identification-microservices-hierarchical-clustering
 Automatic Identiﬁcation of Microservices Using a Hierarchical Clustering Algorithm
 
+```tex
 @INPROCEEDINGS{9101266,
   author={Selmadji, Anfel and Seriai, Abdelhak-Djamel and Bouziane, Hinde Lilia and Oumarou Mahamane, Rahina and Zaragoza, Pascal and Dony, Christophe},
   booktitle={2020 IEEE International Conference on Software Architecture (ICSA)}, 
@@ -14,3 +15,4 @@ Automatic Identiﬁcation of Microservices Using a Hierarchical Clustering Algor
   doi={10.1109/ICSA47634.2020.00023},
   ISSN={},
   month={March},}
+```
