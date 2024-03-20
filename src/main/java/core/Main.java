@@ -111,7 +111,6 @@ public class Main {
 									aModelClass.setFullyQualifiedName(calleeInterface.getQualifiedName());
 //									aModelClass.addImplementations(classesFromInterfaces);
 								} catch (Exception e1) {
-									// TODO Auto-generated catch block
 //									e1.printStackTrace();
 								}
 //								e.printStackTrace();
@@ -196,7 +195,6 @@ public class Main {
 								getCallerClass(i).getSimpleName() + " call  " + getCalleeInterface(i).getSimpleName()
 										+ "." + getCalleeName(i) + " : " + counterInvocation);
 					} catch (Exception e1) {
-						// TODO Auto-generated catch
 //						e1.printStackTrace();
 					}
 				}

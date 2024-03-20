@@ -42,7 +42,6 @@ public class ModelMethod {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return this.fullyQualifiedName;
 	}
 
@@ -63,7 +62,7 @@ public class ModelMethod {
 	}
 	
 	private static List<ModelClass> resolveCallesFromMethodInvocations(CtClass ctClass, CtMethod ctMethod) {
-		// TODO Auto-generated method stub
+		// TODO implementation
 		return null;
 	}
 

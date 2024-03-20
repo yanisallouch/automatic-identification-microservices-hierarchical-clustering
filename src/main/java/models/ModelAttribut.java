@@ -35,12 +35,11 @@ public class ModelAttribut {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return this.fullyQualifiedName;
 	}
 
 	public static List<ModelAttribut> makeModelAttributs(CtClass ctClass) {
-		// TODO Auto-generated method stub
+		// TODO implementation
 		return null;
 	}
 }

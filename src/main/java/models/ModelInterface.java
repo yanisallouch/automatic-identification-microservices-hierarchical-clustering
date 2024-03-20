@@ -38,7 +38,6 @@ public class ModelInterface {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return this.fullyQualifiedName;
 	}
 
@@ -50,9 +49,9 @@ public class ModelInterface {
 
 			// TODO Compare with toString()
 			aModelInterface.setFullyQualifiedName(aTypeReference.getQualifiedName());
-			// TODO
+			// TODO use implementation
 			aModelInterface.setImplementations(null);
-			// TODO
+			// TODO use implementation
 			aModelInterface.setMethods(null);
 
 			aModelInterfaces.add(aModelInterface);
