@@ -48,25 +48,27 @@ public class Main {
 
 		model = spoon.getModel();
 
-		List<CtClass> classes = countTotalClasses(model);
-
-		System.out.println("==============");
-
-		countTotalMethods(model);
-
-		System.out.println("==============");
-
-		countMethodsPerClass(classes);
-
-		System.out.println("==============");
-
-		countTotalMethodsCalls(model);
-
-		NbCall(model);
-
-		/*
-		 * Partitioning a Dendrogram to Obtain Microservices
-		 */
+		List<ModelClass> classes = ModelClass.makeModelClassesFromModel(model);
+		
+//		List<CtClass> classes = countTotalClasses(model);
+//
+//		System.out.println("==============");
+//
+//		countTotalMethods(model);
+//
+//		System.out.println("==============");
+//
+//		countMethodsPerClass(classes);
+//
+//		System.out.println("==============");
+//
+//		countTotalMethodsCalls(model);
+//
+//		NbCall(model);
+//
+//		/*
+//		 * Partitioning a Dendrogram to Obtain Microservices
+//		 */
 
 	}
 

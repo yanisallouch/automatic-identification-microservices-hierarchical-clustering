@@ -40,6 +40,12 @@ public class ModelMethod {
 		this.callees = callees;
 	}
 
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.fullyQualifiedName;
+	}
+
 	public static List<ModelMethod> makeModelMethods(CtClass ctClass, ModelClass aModelClass) {
 		List<ModelMethod> aModelMethods = new ArrayList<ModelMethod>();
 		Set<CtMethod> methods = ctClass.getMethods();
@@ -48,12 +54,17 @@ public class ModelMethod {
 			ModelMethod aModelMethod = new ModelMethod();
 			aModelMethod.setFullyQualifiedName(ctClass.getQualifiedName() + ctMethod.getSignature());
 			aModelMethod.setCaller(aModelClass);
-			List<ModelClass> aModelClasses = ModelClass.resolveCallesFromMethodInvocations(ctClass, ctMethod);
+			List<ModelClass> aModelClasses = ModelMethod.resolveCallesFromMethodInvocations(ctClass, ctMethod);
 			aModelMethod.setCallee(aModelClasses);
 			aModelMethods.add(aModelMethod);
 		}
 
 		return aModelMethods;
+	}
+	
+	private static List<ModelClass> resolveCallesFromMethodInvocations(CtClass ctClass, CtMethod ctMethod) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

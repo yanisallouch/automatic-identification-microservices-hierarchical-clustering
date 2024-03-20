@@ -36,6 +36,12 @@ public class ModelInterface {
 		this.implementations = implementations;
 	}
 
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.fullyQualifiedName;
+	}
+
 	public static List<ModelInterface> makeModelInterfaces(CtClass ctClass) {
 		List<ModelInterface> aModelInterfaces = new ArrayList<ModelInterface>();
 		Set<CtTypeReference<?>> interfaces = ctClass.getSuperInterfaces();
@@ -51,7 +57,7 @@ public class ModelInterface {
 
 			aModelInterfaces.add(aModelInterface);
 		}
-		
+
 		return aModelInterfaces;
 	}
 }

@@ -48,6 +48,12 @@ public class ModelClass {
 		this.attributs = attributs;
 	}
 
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.getFullyQualifiedName();
+	}
+
 	public static List<ModelClass> makeModelClassesFromModel(CtModel model) {
 		List<ModelClass> aModelClasses = new ArrayList<ModelClass>();
 		List<CtClass> classes = model.getElements(new TypeFilter<>(CtClass.class));
@@ -69,11 +75,6 @@ public class ModelClass {
 		}
 
 		return aModelClasses;
-	}
-
-	public static List<ModelClass> resolveCallesFromMethodInvocations(CtClass ctClass, CtMethod ctMethod) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
