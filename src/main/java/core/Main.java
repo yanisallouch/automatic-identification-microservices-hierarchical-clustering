@@ -8,12 +8,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import models.ModelClass;
 import spoon.Launcher;
 import spoon.reflect.CtModel;
 import spoon.reflect.code.CtInvocation;
 import spoon.reflect.cu.SourcePosition;
 import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtInterface;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.reference.CtTypeReference;
@@ -70,33 +70,53 @@ public class Main {
 
 	}
 
+	/*
+	 * je récupère les invocations de méthodes par C2
+	 * pour une invocation de méthode par C2
+	 * je cherche la classe d'invocation de la méthode par C2
+	 * incrémenter de un le nombre d'appel pour cette classe
+	 * 
+	 */
+	
 	private static void NbCall(CtModel model) {
 		List<CtClass> classes = model.getElements(new TypeFilter<>(CtClass.class));
-		Map<CtClass, Integer> callPerClass = new HashMap<CtClass, Integer>();
+		Map<ModelClass, Integer> callPerClass = new HashMap<ModelClass, Integer>();
 		for (CtClass c1 : classes) {
+			int nbCall = 0;
 			for (CtClass c2 : classes) {
+				
 				if (!c1.equals(c2)) {
+					
 					List<CtInvocation> invocations = c2.getElements(new TypeFilter<>(CtInvocation.class));
 //					List<CtMethod> methods1 = c1.getElements(new TypeFilter<>(CtMethod.class));
 					CtClass calleeClass;
 					CtInterface calleeInterface;
 					List<CtClass> classesFromInterfaces;
+					
 					for (CtInvocation i : invocations) {
+				
 						boolean invocationIsObject = i.getPosition() == SourcePosition.NOPOSITION;
 						if (!invocationIsObject) {
+						
+							ModelClass aModelClass = new ModelClass();
 							try {
 								calleeClass = getCalleeClass(i);
+								aModelClass.setFullyQualifiedName(calleeClass.getQualifiedName());
+								aModelClass.addImplementations(calleeClass);
 							} catch (Exception e) {
 								try {
 									calleeInterface = getCalleeInterface(i);
 									classesFromInterfaces = getAllClassFromInterface(calleeInterface);
+									aModelClass.setFullyQualifiedName(calleeInterface.getQualifiedName());
+									aModelClass.addImplementations(classesFromInterfaces);
 								} catch (Exception e1) {
 									// TODO Auto-generated catch block
 //									e1.printStackTrace();
 								}
 //								e.printStackTrace();
 							}
-							
+							nbCall++;
+							callPerClass.put(aModelClass, nbCall);
 						}
 					}
 				}
