@@ -49,7 +49,7 @@ public class Main {
 		model = spoon.getModel();
 
 		List<ModelClass> classes = ModelClass.makeModelClassesFromModel(model);
-		
+
 //		List<CtClass> classes = countTotalClasses(model);
 //
 //		System.out.println("==============");

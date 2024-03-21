@@ -61,7 +61,7 @@ public class ModelClass {
 			ModelClass aModelClass = new ModelClass();
 			aModelClass.setFullyQualifiedName(ctClass.getQualifiedName());
 
-			List<ModelInterface> aModelInterfaces = ModelInterface.makeModelInterfaces(ctClass);
+			List<ModelInterface> aModelInterfaces = ModelInterface.makeModelInterfaces(model, ctClass);
 			aModelClass.setInterfaces(aModelInterfaces);
 
 			List<ModelMethod> aModelMethods = ModelMethod.makeModelMethods(ctClass, aModelClass);
