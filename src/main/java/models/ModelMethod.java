@@ -9,7 +9,6 @@ import java.util.function.Predicate;
 import spoon.reflect.CtModel;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtInvocation;
-import spoon.reflect.code.CtThisAccess;
 import spoon.reflect.cu.SourcePosition;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
@@ -19,13 +18,9 @@ import spoon.support.reflect.code.CtThisAccessImpl;
 
 public class ModelMethod {
 	String fullyQualifiedName;
-	// a.k.a. class from which the method is being invoked, i.e.
-	// org.package.c1.m1#c2.m2(), caller is c1
-	ModelClass caller;
+	@SuppressWarnings("rawtypes")
 	List<CtInvocation> invocations;
-	// a.k.a. class from which the method is being invoked, i.e.
-	// org.package.c1.m1#c2.m2(), callee is c2
-	List<String> calleesFullyQualifiedName;
+	List<ModelClass> calleesFullyQualifiedName;
 
 	@SuppressWarnings("rawtypes")
 	public List<CtInvocation> getInvocations() {
@@ -45,19 +40,11 @@ public class ModelMethod {
 		this.fullyQualifiedName = fullyQualifiedName;
 	}
 
-	public ModelClass getCaller() {
-		return caller;
-	}
-
-	public void setCaller(ModelClass caller) {
-		this.caller = caller;
-	}
-
-	public List<String> getCalleesFullyQualifiedName() {
+	public List<ModelClass> getCalleesFullyQualifiedName() {
 		return calleesFullyQualifiedName;
 	}
 
-	public void setCalleesFullyQualifiedName(List<String> calleesFullyQualifiedName) {
+	public void setCalleesFullyQualifiedName(List<ModelClass> calleesFullyQualifiedName) {
 		this.calleesFullyQualifiedName = calleesFullyQualifiedName;
 	}
 
@@ -66,6 +53,7 @@ public class ModelMethod {
 		return this.fullyQualifiedName;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List<ModelMethod> makeModelMethods(CtClass ctClass, ModelClass aModelClass) {
 		List<ModelMethod> aModelMethods = new ArrayList<ModelMethod>();
 		Set<CtMethod> methods = ctClass.getMethods();
@@ -73,13 +61,12 @@ public class ModelMethod {
 		for (CtMethod ctMethod : methods) {
 			ModelMethod aModelMethod = new ModelMethod();
 			aModelMethod.setFullyQualifiedName(ctClass.getQualifiedName() + "#" + ctMethod.getSignature());
-			aModelMethod.setCaller(aModelClass);
-
 			// TODO implementations
 			List<CtInvocation> aInvocations = ModelMethod.resolveMethodInvocationsFromClass(ctClass, ctMethod);
-			// TODO implemntations
+			// TODO implementations
 			List<String> aClassesFullyQualifiedName = ModelMethod.resolveCallesFromMethodInvocations(ctClass, ctMethod);
-			aModelMethod.setCalleesFullyQualifiedName(aClassesFullyQualifiedName);
+			// TODO implementations
+			aModelMethod.setCalleesFullyQualifiedName(null);
 			aModelMethods.add(aModelMethod);
 		}
 
@@ -131,6 +118,7 @@ public class ModelMethod {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static List<String> resolveCallesFromMethodInvocations(CtClass ctClass, CtMethod ctMethod) {
 		// TODO implementation
 		return null;

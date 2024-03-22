@@ -14,7 +14,6 @@ import spoon.reflect.visitor.filter.TypeFilter;
 public class ModelInterface {
 	String fullyQualifiedName;
 	List<String> methodsFullyQualifiedName;
-	List<String> implementationsFullyQualifiedName;
 
 	public String getFullyQualifiedName() {
 		return fullyQualifiedName;
@@ -32,15 +31,6 @@ public class ModelInterface {
 		this.methodsFullyQualifiedName = methodsFullyQualifiedName;
 	}
 
-	public List<String> getImplementations() {
-		return implementationsFullyQualifiedName;
-	}
-
-	public void setImplementationsFullyQualifiedName(List<String> implementationsFullyQualifiedName) {
-		this.implementationsFullyQualifiedName = implementationsFullyQualifiedName;
-	}
-
-	@Override
 	public String toString() {
 		return this.fullyQualifiedName;
 	}
@@ -53,10 +43,7 @@ public class ModelInterface {
 			ModelInterface aModelInterface = new ModelInterface();
 			// TODO Compare with toString()
 			aModelInterface.setFullyQualifiedName(aTypeReference.getQualifiedName());
-			aModelInterface
-					.setImplementationsFullyQualifiedName(resolveImplementationsFromInterface(model, aTypeReference));
 			aModelInterface.setMethods(resolveMethods(model, aTypeReference));
-
 			aModelInterfaces.add(aModelInterface);
 		}
 
