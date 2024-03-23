@@ -2,26 +2,17 @@ package core;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
 import models.Cluster;
-import processors.AnalysisProcessor;
 import spoon.Launcher;
 import spoon.reflect.CtModel;
 import spoon.reflect.code.CtInvocation;
-import spoon.reflect.code.CtStatement;
-import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtElement;
-import spoon.reflect.declaration.CtInterface;
 import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.path.CtRole;
-import spoon.reflect.visitor.filter.AbstractFilter;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 public class Main {
@@ -69,7 +60,7 @@ public class Main {
 					bestPairCluster = pairCluster;
 				}
 			}
-			Cluster mergeCluster = new Cluster(bestPairCluster.getRight(),bestPairCluster.getLeft());
+			Cluster mergeCluster = new Cluster(bestPairCluster.getRight(), bestPairCluster.getLeft());
 			clusters.remove(bestPairCluster.getLeft());
 			clusters.remove(bestPairCluster.getRight());
 			clusters.add(mergeCluster);
@@ -79,6 +70,40 @@ public class Main {
 	}
 
 	private static Double quality(Pair<Cluster, Cluster> pc) {
+		Cluster microservice = new Cluster(pc);
+		return fMicroservice(microservice);
+	}
+
+	private static Double fMicroservice(Cluster microservice) {
+		return Double.valueOf(((1 / n) * ((alpha * fStructureBehavior(microservice)) - (beta * fData(microservice)))));
+	}
+
+	private static Double fStructureBehavior(Cluster microservice) {
+		return Double.valueOf(((1 / n) * ((alpha * fOne(microservice)) - (beta * fAutonomy(microservice)))));
+	}
+
+	private static Double fOne(Cluster microservice) {
+		return Double.valueOf(((1 / n) * (internalCoupling(microservice) + internalCohesion(microservice))));
+	}
+
+	private static Double internalCoupling(Cluster microservice) {
+		Double sum = Double.valueOf(0D);
+		
+		// TODO Auto-generated method stub
+		return 0D;
+	}
+
+	private static Double internalCohesion(Cluster microservice) {
+		// TODO Auto-generated method stub
+		return 0D;
+	}
+
+	private static Double fAutonomy(Cluster microservice) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private static Double fData(Cluster microservice) {
 		// TODO Auto-generated method stub
 		return null;
 	}
