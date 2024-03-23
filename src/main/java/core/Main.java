@@ -86,11 +86,34 @@ public class Main {
 		return Double.valueOf(((1 / n) * (internalCoupling(microservice) + internalCohesion(microservice))));
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static Double internalCoupling(Cluster microservice) {
+		Double result = Double.valueOf(0D);
 		Double sum = Double.valueOf(0D);
-		
+		Double mean = Double.valueOf(0D);
+		int length = microservice.getClasses().size();
+		Double sumStandDeviation = Double.valueOf(0D);
+
+		for (CtType c1 : microservice.getClasses()) {
+			for (CtType c2 : microservice.getClasses()) {
+				sum += couplingPair(c1, c2);
+			}
+		}
+		mean = sum / (length * 2);
+
+		for (CtType c1 : microservice.getClasses()) {
+			for (CtType c2 : microservice.getClasses()) {
+				sumStandDeviation += Math.pow(couplingPair(c1, c2) - mean, 2);
+			}
+		}
+
+		result = sum - Math.sqrt(sumStandDeviation / length);
+		return result;
+	}
+
+	private static Double couplingPair(CtType c1, CtType c2) {
 		// TODO Auto-generated method stub
-		return 0D;
+		return null;
 	}
 
 	private static Double internalCohesion(Cluster microservice) {
@@ -100,7 +123,7 @@ public class Main {
 
 	private static Double fAutonomy(Cluster microservice) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0D;
 	}
 
 	private static Double fData(Cluster microservice) {

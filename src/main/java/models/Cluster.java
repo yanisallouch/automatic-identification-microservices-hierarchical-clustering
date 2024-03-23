@@ -30,10 +30,20 @@ public class Cluster {
 		this.classes.addAll(pc.getLeft().getClasses());
 	}
 
+	@SuppressWarnings("rawtypes")
 	public List<CtType> getClasses() {
-		return classes;
+		List<CtType> results = new ArrayList<>();
+		results.addAll(classes);
+		if (clusterA != null) {
+			results.addAll(this.clusterA.getClasses());
+		}
+		if (clusterB != null) {
+			results.addAll(this.clusterB.getClasses());
+		}
+		return results;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void setClasses(List<CtType> classes) {
 		this.classes = classes;
 	}
