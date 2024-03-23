@@ -1,41 +1,47 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import spoon.reflect.declaration.CtType;
 
 public class Cluster {
 
-	Cluster cluster;
-	List<CtType> types;
-
-	public Cluster getCluster() {
-		return cluster;
-	}
-
-	public void setCluster(Cluster cluster) {
-		this.cluster = cluster;
-	}
+	Cluster clusterA;
+	Cluster clusterB;
+	@SuppressWarnings("rawtypes")
+	CtType classe;
 
 	public Cluster(CtType<?> ctType) {
-		types = new ArrayList<CtType>();
-		types.add(ctType);
+		this.classe = ctType;
 	}
 
-	public List<CtType> getTypes() {
-		return types;
+	public Cluster(Cluster right, Cluster left) {
+		this.setClusterA(left);
+		this.setClusterB(right);
 	}
 
-	public void setTypes(List<CtType> types) {
-		this.types = types;
+	public Cluster getClusterA() {
+		return clusterA;
 	}
 
-	public void add(CtType type) {
-		this.types.add(type);
+	public void setClusterA(Cluster clusterA) {
+		this.clusterA = clusterA;
 	}
 
-	public void addAll(List<CtType> types) {
-		this.types.addAll(types);
+	public Cluster getClusterB() {
+		return clusterB;
 	}
+
+	public void setClusterB(Cluster clusterB) {
+		this.clusterB = clusterB;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public CtType getTypes() {
+		return classe;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public void setTypes(CtType classe) {
+		this.classe = classe;
+	}
+
 }

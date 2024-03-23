@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import models.Cluster;
 import processors.AnalysisProcessor;
 import spoon.Launcher;
@@ -57,15 +59,39 @@ public class Main {
 			clusters.add(new Cluster(ctType));
 		}
 
+		List<Pair<Cluster, Cluster>> pairsClusters = createPairsClusters(clusters);
 		while (clusters.size() > 1) {
-			// TODO
+			Double maxQuality = 0D;
+			Pair<Cluster, Cluster> bestPairCluster = pairsClusters.get(0);
+			for (Pair<Cluster, Cluster> pairCluster : pairsClusters) {
+				Double quality = quality(pairCluster);
+				if (maxQuality < quality) {
+					bestPairCluster = pairCluster;
+				}
+			}
+			Cluster mergeCluster = new Cluster(bestPairCluster.getRight(),bestPairCluster.getLeft());
+			clusters.remove(bestPairCluster.getLeft());
+			clusters.remove(bestPairCluster.getRight());
+			clusters.add(mergeCluster);
+			pairsClusters = createPairsClusters(clusters);
 		}
 		System.out.println();
 	}
 
-	private static double quality(Cluster cluster, Cluster cluster2) {
+	private static Double quality(Pair<Cluster, Cluster> pc) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
+	}
+
+	private static List<Pair<Cluster, Cluster>> createPairsClusters(List<Cluster> clusters) {
+		List<Pair<Cluster, Cluster>> results = new ArrayList<>();
+		for (Cluster c1 : clusters) {
+			for (Cluster c2 : clusters) {
+				results.add(Pair.of(c1, c2));
+			}
+		}
+
+		return results;
 	}
 
 	private static int getTotalNbCallsInApp(Collection<CtType<?>> allTypes) {
