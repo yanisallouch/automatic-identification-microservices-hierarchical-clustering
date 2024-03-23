@@ -2,6 +2,7 @@ package core;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -10,10 +11,17 @@ import org.apache.commons.lang3.tuple.Pair;
 import models.Cluster;
 import spoon.Launcher;
 import spoon.reflect.CtModel;
+import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtInvocation;
+import spoon.reflect.code.CtStatement;
+import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
+import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.filter.TypeFilter;
+import spoon.support.reflect.code.CtFieldAccessImpl;
+import spoon.support.reflect.code.CtVariableReadImpl;
+import spoon.support.reflect.code.CtVariableWriteImpl;
 
 public class Main {
 
@@ -111,21 +119,89 @@ public class Main {
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static Double couplingPair(CtType c1, CtType c2) {
 		Double result = 0D;
-		result = Double.valueOf((double)((nbCalls(c1, c2) + nbCalls(c2,c1))/totalNbCallsInApp));
+		result = Double.valueOf((double) ((nbCalls(c1, c2) + nbCalls(c2, c1)) / totalNbCallsInApp));
 
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static int nbCalls(CtType c2, CtType c1) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	private static Double internalCohesion(Cluster microservice) {
+		return nbLiensExistant(microservice) / totalNbLiensTotal;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static Double nbLiensExistant(Cluster microservice) {
+		Double result = 0D;
+		for (CtType c1 : microservice.getClasses()) {
+			Set<CtMethod<?>> methods1 = c1.getMethods();
+			for (CtType c2 : microservice.getClasses()) {
+				if (!c1.equals(c2)) {
+					Set<CtMethod<?>> methods2 = c2.getMethods();
+					for (CtMethod m1 : methods1) {
+						for (CtMethod m2 : methods2) {
+							if (accessSameAttribut(m1, m2)) {
+								result += 1;
+							}
+						}
+					}
+				}
+			}
+		}
 		// TODO Auto-generated method stub
 		return 0D;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static boolean accessSameAttribut(CtMethod m1, CtMethod m2) {
+		boolean result = false;
+		CtBlock b1 = m1.getBody();
+		CtBlock b2 = m2.getBody();
+		if (b1 == null || b2 == null) {
+			return result;
+		}
+		for (CtStatement stmt1 : b1.getStatements()) {
+			for (CtStatement stmt2 : b2.getStatements()) {
+				List<CtElement> childs1 = stmt1.getDirectChildren();
+				for (CtElement e1 : childs1) {
+					if (e1.getClass().equals(CtVariableReadImpl.class)
+							|| e1.getClass().equals(CtVariableWriteImpl.class)
+							|| e1.getClass().equals(CtFieldAccessImpl.class)) {
+						List<CtElement> childs2 = stmt2.getDirectChildren();
+						for (CtElement e2 : childs2) {
+							if (e2.getClass().equals(CtVariableReadImpl.class)
+									|| e2.getClass().equals(CtVariableWriteImpl.class)
+									|| e2.getClass().equals(CtFieldAccessImpl.class)) {
+								List<CtElement> childsAttribute = e1.getDirectChildren();
+								for (CtElement attributeElement1 : childsAttribute) {
+									Set<CtTypeReference<?>> rae1 = attributeElement1.getReferencedTypes();
+									for (CtTypeReference tr1 : rae1) {
+										List<CtElement> childsAttribute2 = e2.getDirectChildren();
+										for (CtElement attributeElement2 : childsAttribute2) {
+											Set<CtTypeReference<?>> rae2 = attributeElement2.getReferencedTypes();
+											for (CtTypeReference tr2 : rae2) {
+												if(tr1.toString().equals(tr2.toString())) {
+													result = true;
+													return result;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 	private static Double fAutonomy(Cluster microservice) {
@@ -135,7 +211,7 @@ public class Main {
 
 	private static Double fData(Cluster microservice) {
 		// TODO Auto-generated method stub
-		return null;
+		return 0D;
 	}
 
 	private static List<Pair<Cluster, Cluster>> createPairsClusters(List<Cluster> clusters) {
