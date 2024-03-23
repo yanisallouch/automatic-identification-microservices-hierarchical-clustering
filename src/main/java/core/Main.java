@@ -112,8 +112,15 @@ public class Main {
 	}
 
 	private static Double couplingPair(CtType c1, CtType c2) {
+		Double result = 0D;
+		result = Double.valueOf((double)((nbCalls(c1, c2) + nbCalls(c2,c1))/totalNbCallsInApp));
+
+		return result;
+	}
+
+	private static int nbCalls(CtType c2, CtType c1) {
 		// TODO Auto-generated method stub
-		return null;
+		return 0;
 	}
 
 	private static Double internalCohesion(Cluster microservice) {
