@@ -78,7 +78,12 @@ public class Main {
 			clusters.add(mergeCluster);
 			pairsClusters = createPairsClusters(clusters);
 		}
-		System.out.println();
+		printClusters(clusters);
+	}
+
+	private static void printClusters(List<Cluster> clusters) {
+		// TODO Auto-generated method stub
+
 	}
 
 	private static Double quality(Pair<Cluster, Cluster> pc) {
@@ -196,12 +201,16 @@ public class Main {
 
 	@SuppressWarnings("rawtypes")
 	private static List<CtInvocation> getInvocations(CtMethod m2) {
-		List<CtStatement> stmts = m2.getBody().getStatements().stream()
-				.filter(s -> s.getClass().equals(CtInvocationImpl.class)).toList();
 		List<CtInvocation> invocations = new ArrayList<>();
-		for (CtStatement stmt : stmts) {
-			invocations.add((CtInvocation) stmt);
+		CtBlock body = m2.getBody();
+		if (body != null) {
+			List<CtStatement> stmts = body.getStatements().stream()
+					.filter(s -> s.getClass().equals(CtInvocationImpl.class)).toList();
+			for (CtStatement stmt : stmts) {
+				invocations.add((CtInvocation) stmt);
+			}
 		}
+
 		return invocations;
 	}
 
@@ -284,7 +293,6 @@ public class Main {
 		Double result = Double.valueOf(0D);
 		Double sum = Double.valueOf(0D);
 		Double mean = Double.valueOf(0D);
-		// TODO
 		List<Pair<CtType, CtType>> pairsClasses = createPairsClasse(microservice);
 		int length = getNbExternalPairs(pairsClasses);
 		Double sumStandDeviation = Double.valueOf(0D);
@@ -342,8 +350,133 @@ public class Main {
 	}
 
 	private static Double fData(Cluster microservice) {
+		return Double.valueOf(((1 / n) * ((alpha * fIntra(microservice)) - (beta * fInter(microservice)))));
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static Double fIntra(Cluster microservice) {
+		Double result = Double.valueOf(0D);
+		Double sum = Double.valueOf(0D);
+		List<Pair<CtType, CtType>> pairsClasses = createPairsClasse(microservice);
+		int length = pairsClasses.size();
+		for (CtType c1 : microservice.getClasses()) {
+			for (CtType c2 : microservice.getClasses()) {
+				if (!c1.equals(c2)) {
+					sum += dataDependencies(c1, c2, microservice);
+				}
+			}
+		}
+
+		result = sum / length;
+		return result;
+
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static Double dataDependencies(CtType c1, CtType c2, Cluster microservice) {
+		Double result = Double.valueOf(0D);
+		Double sum = Double.valueOf(0D);
+		List<CtType> dataClasseType = getDataClasses(microservice);
+		int length = dataClasseType.size();
+		if (!c1.equals(c2)) {
+			for (CtType k : dataClasseType) {
+				sum += dataScore(c1, c2, k) * freq(c1, c2, k);
+			}
+		}
+
+		result = sum / length;
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static List<CtType> getDataClasses(Cluster microservice) {
+		/*
+		 * Define what is a "data object".
+		 */
+		return new ArrayList<>();
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static Double freq(CtType c1, CtType c2, CtType k) {
+		Double result = Double.valueOf(0D);
+		Double sum = Double.valueOf(0D);
+		Double mean = Double.valueOf(0D);
+		int length = 2;
+		Double sumStandDeviation = Double.valueOf(0D);
+
+		sum = freqCall(c1, k) + freqCall(c2, k);
+		mean = sum / (length * 2);
+
+		sumStandDeviation += Math.pow(freqCall(c1, k) + freqCall(c2, k) - mean, 2);
+
+		result = sum - Math.sqrt(sumStandDeviation / length);
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static Double freqCall(CtType c2, CtType k) {
 		// TODO Auto-generated method stub
 		return 0D;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static Double dataScore(CtType c1, CtType c2, CtType k) {
+		Double result = 0D;
+		if (writeData(c1, k) && writeData(c2, k)) {
+			result = 1D;
+		} else if ((writeData(c1, k) && readData(c2, k)) || (writeData(c2, k) && readData(c1, k))) {
+			result = 0.5D;
+		} else if (readData(c1, k) && readData(c2, k)) {
+			result = 0.25D;
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static boolean readData(CtType c2, CtType k) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static boolean writeData(CtType c1, CtType k) {
+		boolean result = false;
+		Set<CtMethod<?>> methods = c1.getMethods();
+		List<CtStatement> stmts = new ArrayList<>();
+		for (CtMethod<?> method : methods) {
+			stmts.addAll(method.getBody().getStatements());
+		}
+		for (CtStatement stmt : stmts) {
+			if (writeData(stmt, k)) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static boolean writeData(CtStatement stmt, CtType k) {
+		boolean result = false;
+
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static Double fInter(Cluster microservice) {
+		Double result = Double.valueOf(0D);
+		Double sum = Double.valueOf(0D);
+		List<Pair<CtType, CtType>> pairsClasses = createPairsClasse(microservice);
+		int length = getNbExternalPairs(pairsClasses);
+		for (CtType c1 : microservice.getClasses()) {
+			for (CtType c2 : microservice.getClasses()) {
+				if (!c1.equals(c2)) {
+					sum += dataDependencies(c1, c2, microservice);
+				}
+			}
+		}
+
+		result = sum / length;
+		return result;
 	}
 
 	private static List<Pair<Cluster, Cluster>> createPairsClusters(List<Cluster> clusters) {
