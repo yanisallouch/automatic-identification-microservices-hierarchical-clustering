@@ -2,8 +2,9 @@ package core;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -16,10 +17,12 @@ import spoon.reflect.code.CtInvocation;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.CtNamedElement;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.support.reflect.code.CtFieldAccessImpl;
+import spoon.support.reflect.code.CtInvocationImpl;
 import spoon.support.reflect.code.CtVariableReadImpl;
 import spoon.support.reflect.code.CtVariableWriteImpl;
 
@@ -104,14 +107,18 @@ public class Main {
 
 		for (CtType c1 : microservice.getClasses()) {
 			for (CtType c2 : microservice.getClasses()) {
-				sum += couplingPair(c1, c2);
+				if (!c1.equals(c2)) {
+					sum += couplingPair(c1, c2);
+				}
 			}
 		}
 		mean = sum / (length * 2);
 
 		for (CtType c1 : microservice.getClasses()) {
 			for (CtType c2 : microservice.getClasses()) {
-				sumStandDeviation += Math.pow(couplingPair(c1, c2) - mean, 2);
+				if (!c1.equals(c2)) {
+					sumStandDeviation += Math.pow(couplingPair(c1, c2) - mean, 2);
+				}
 			}
 		}
 
@@ -127,10 +134,73 @@ public class Main {
 		return result;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static int nbCalls(CtType c1, CtType c2) {
+		int result = 0;
+		if (!c1.equals(c2)) {
+			Set<CtMethod<?>> methods1 = c1.getMethods();
+			Set<CtMethod<?>> methods2 = c2.getMethods();
+			for (CtMethod m1 : methods1) {
+				for (CtMethod m2 : methods2) {
+					if (invocationOf(m1, m2)) {
+						result += 1;
+					}
+				}
+
+			}
+		}
+		return result;
+	}
+
 	@SuppressWarnings("rawtypes")
-	private static int nbCalls(CtType c2, CtType c1) {
-		// TODO Auto-generated method stub
-		return 0;
+	private static boolean invocationOf(CtMethod m1, CtMethod m2) {
+		boolean result = false;
+		List<CtInvocation> invocations = getInvocations(m2);
+		for (CtInvocation invocation : invocations) {
+			if (getTypeInvocation(invocation).equals(getTypeMethod(m1))) {
+				result = true;
+				continue;
+			}
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static String getTypeMethod(CtMethod m1) {
+		String result = "b";
+		if (m1 != null) {
+			CtElement foo = m1.getParent();
+			if (foo != null) {
+				CtElement bar = foo.getParent();
+				if (bar != null) {
+					result = bar.toString().concat(".").concat(((CtNamedElement) foo).getSimpleName());
+				}
+			}
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static String getTypeInvocation(CtInvocation invocation) {
+		Set<CtTypeReference<?>> foo = invocation.getTarget().getReferencedTypes();
+		String result = "a";
+		Optional<CtTypeReference<?>> bar = foo.stream().findFirst();
+		if (bar.isPresent()) {
+			result = bar.get().toString();
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static List<CtInvocation> getInvocations(CtMethod m2) {
+		List<CtStatement> stmts = m2.getBody().getStatements().stream()
+				.filter(s -> s.getClass().equals(CtInvocationImpl.class)).toList();
+		List<CtInvocation> invocations = new ArrayList<>();
+		for (CtStatement stmt : stmts) {
+			invocations.add((CtInvocation) stmt);
+		}
+		return invocations;
 	}
 
 	private static Double internalCohesion(Cluster microservice) {
@@ -155,8 +225,7 @@ public class Main {
 				}
 			}
 		}
-		// TODO Auto-generated method stub
-		return 0D;
+		return result;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -187,7 +256,7 @@ public class Main {
 										for (CtElement attributeElement2 : childsAttribute2) {
 											Set<CtTypeReference<?>> rae2 = attributeElement2.getReferencedTypes();
 											for (CtTypeReference tr2 : rae2) {
-												if(tr1.toString().equals(tr2.toString())) {
+												if (tr1.toString().equals(tr2.toString())) {
 													result = true;
 													return result;
 												}
@@ -225,6 +294,7 @@ public class Main {
 		return results;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static int getTotalNbCallsInApp(Collection<CtType<?>> allTypes) {
 		int total = 0;
 		for (CtType<?> ctType : allTypes) {
