@@ -35,6 +35,7 @@ public class Main {
 	protected static int totalNbCallsInApp;
 	protected static int totalNbLiensTotal;
 	protected static int totalNbClasses;
+	protected static List<Pair<Cluster, Cluster>> pairsClusters;
 
 	public static void main(String[] args) {
 
@@ -61,7 +62,7 @@ public class Main {
 			clusters.add(new Cluster(ctType));
 		}
 
-		List<Pair<Cluster, Cluster>> pairsClusters = createPairsClusters(clusters);
+		pairsClusters = createPairsClusters(clusters);
 		while (clusters.size() > 1) {
 			Double maxQuality = 0D;
 			Pair<Cluster, Cluster> bestPairCluster = pairsClusters.get(0);
@@ -102,7 +103,8 @@ public class Main {
 		Double result = Double.valueOf(0D);
 		Double sum = Double.valueOf(0D);
 		Double mean = Double.valueOf(0D);
-		int length = microservice.getClasses().size();
+		List<Pair<CtType, CtType>> pairsClasses = createPairsClasse(microservice);
+		int length = pairsClasses.size();
 		Double sumStandDeviation = Double.valueOf(0D);
 
 		for (CtType c1 : microservice.getClasses()) {
@@ -274,8 +276,69 @@ public class Main {
 	}
 
 	private static Double fAutonomy(Cluster microservice) {
-		// TODO Auto-generated method stub
-		return 0D;
+		return externalCoupling(microservice);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static Double externalCoupling(Cluster microservice) {
+		Double result = Double.valueOf(0D);
+		Double sum = Double.valueOf(0D);
+		Double mean = Double.valueOf(0D);
+		// TODO
+		List<Pair<CtType, CtType>> pairsClasses = createPairsClasse(microservice);
+		int length = getNbExternalPairs(pairsClasses);
+		Double sumStandDeviation = Double.valueOf(0D);
+
+		for (CtType c1 : microservice.getClasses()) {
+			for (CtType c2 : microservice.getClasses()) {
+				if (!c1.equals(c2)) {
+					sum += couplingPair(c1, c2);
+				}
+			}
+		}
+		mean = sum / (length * 2);
+
+		for (CtType c1 : microservice.getClasses()) {
+			for (CtType c2 : microservice.getClasses()) {
+				if (!c1.equals(c2)) {
+					sumStandDeviation += Math.pow(couplingPair(c1, c2) - mean, 2);
+				}
+			}
+		}
+
+		result = sum - Math.sqrt(sumStandDeviation / length);
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static int getNbExternalPairs(List<Pair<CtType, CtType>> pairsClasses) {
+		int result = 0;
+		for (Pair<Cluster, Cluster> cluster : pairsClusters) {
+			for (Pair<CtType, CtType> pClasse : pairsClasses) {
+				if ((cluster.getRight().getClasses().contains(pClasse.getRight())
+						|| cluster.getRight().getClasses().contains(pClasse.getLeft()))
+						|| (cluster.getLeft().getClasses().contains(pClasse.getRight())
+								|| cluster.getLeft().getClasses().contains(pClasse.getLeft()))) {
+					result += 1;
+				}
+			}
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static List<Pair<CtType, CtType>> createPairsClasse(Cluster microservice) {
+		List<Pair<CtType, CtType>> results = new ArrayList<>();
+		List<CtType> classes = microservice.getClasses();
+		for (CtType c1 : classes) {
+			for (CtType c2 : classes) {
+				if (!c1.equals(c2)) {
+					results.add(Pair.of(c1, c2));
+				}
+			}
+		}
+
+		return results;
 	}
 
 	private static Double fData(Cluster microservice) {
